@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+  useHistory
+} from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -7,15 +15,28 @@ const Menu = () => {
   };
   return (
     <div>
-      <a href="#" style={padding}>
-        anecdotes
-      </a>
-      <a href="#" style={padding}>
-        create new
-      </a>
-      <a href="#" style={padding}>
-        about
-      </a>
+      <Link style={padding} to="/">
+        Anecdotes
+      </Link>
+      <Link style={padding} to="/create">
+        Create New
+      </Link>
+      <Link style={padding} to="/about">
+        About
+      </Link>
+    </div>
+  );
+};
+
+const Anecdote = ({ anecdotes }) => {
+  const id = useParams().id;
+  console.log(typeof id, "ID");
+  const anecdote = anecdotes.find((n) => Number(n.id) === Number(id));
+  console.log(anecdote, " this work?");
+  return (
+    <div>
+      <h2>{anecdote.content}</h2>
+      <h3>{`Has ${anecdote.votes} votes`}</h3>
     </div>
   );
 };
@@ -25,7 +46,9 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}>
+          <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
@@ -154,26 +177,14 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
-  const padding = { padding: 5 };
-
   return (
     <div>
+      <h1>Software anecdotes</h1>
       <Router>
-        <div>
-          <Link style={padding} to="/">
-            Anecdotes
-          </Link>
-          <Link style={padding} to="/create">
-            Create New
-          </Link>
-          <Link style={padding} to="/about">
-            About
-          </Link>
-        </div>
-
+        <Menu />
         <Switch>
           <Route path="/notes/:id">
-            <AnecdoteList anecdotes={anecdotes} />
+            <Anecdote anecdotes={anecdotes} />
           </Route>
           <Route path="/create">
             <CreateNew addNew={addNew} />
@@ -186,9 +197,6 @@ const App = () => {
           </Route>
         </Switch>
       </Router>
-      <h1>Software anecdotes</h1>
-      {/* <Menu /> */}
-
       <Footer />
     </div>
   );
