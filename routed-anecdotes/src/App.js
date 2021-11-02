@@ -6,7 +6,8 @@ import {
   Link,
   useRouteMatch,
   useParams,
-  useHistory
+  useHistory,
+  Redirect
 } from "react-router-dom";
 
 const Menu = () => {
@@ -90,6 +91,14 @@ const Footer = () => (
   </div>
 );
 
+const Notification = ({ anecdote }) => {
+  return (
+    <div>
+      <div>{`A new anecdote ${anecdote.content} has been created`}</div>
+    </div>
+  );
+};
+
 const CreateNew = (props) => {
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
@@ -133,7 +142,7 @@ const CreateNew = (props) => {
             onChange={(e) => setInfo(e.target.value)}
           />
         </div>
-        <button>create</button>
+        <button onClick={handleSubmit}>create</button>
       </form>
     </div>
   );
@@ -156,12 +165,19 @@ const App = () => {
       id: "2"
     }
   ]);
-
   const [notification, setNotification] = useState("");
+
+  const handleNotification = (erase) => {
+    setTimeout(() => {
+      setNotification(erase);
+    }, 10000);
+  };
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(anecdote);
+    handleNotification("");
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -176,7 +192,6 @@ const App = () => {
 
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
-
   return (
     <div>
       <h1>Software anecdotes</h1>
@@ -187,12 +202,17 @@ const App = () => {
             <Anecdote anecdotes={anecdotes} />
           </Route>
           <Route path="/create">
-            <CreateNew addNew={addNew} />
+            {!notification ? (
+              <CreateNew addNew={addNew} />
+            ) : (
+              <Redirect to="/" />
+            )}
           </Route>
           <Route path="/about">
             <About />
           </Route>
           <Route path="/">
+            {notification && <Notification anecdote={notification} />}
             <AnecdoteList anecdotes={anecdotes} />
           </Route>
         </Switch>
