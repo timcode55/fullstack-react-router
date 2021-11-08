@@ -10,23 +10,35 @@ import {
   Redirect
 } from "react-router-dom";
 import { useField } from "./hooks";
+import { Table, Form, Button, Alert, Navbar, Nav } from "react-bootstrap";
 
 const Menu = () => {
   const padding = {
     paddingRight: 5
   };
   return (
-    <div>
-      <Link style={padding} to="/">
-        Anecdotes
-      </Link>
-      <Link style={padding} to="/create">
-        Create New
-      </Link>
-      <Link style={padding} to="/about">
-        About
-      </Link>
-    </div>
+    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="mr-auto">
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/">
+              Anecdotes
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/create">
+              Create New
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/about">
+              About
+            </Link>
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 };
 
@@ -46,13 +58,17 @@ const Anecdote = ({ anecdotes }) => {
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>
-          <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
-        </li>
-      ))}
-    </ul>
+    <Table striped>
+      <tbody>
+        {anecdotes.map((anecdote) => (
+          <tr key={anecdote.id}>
+            <td>
+              <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   </div>
 );
 
@@ -95,7 +111,8 @@ const Footer = () => (
 const Notification = ({ anecdote }) => {
   return (
     <div>
-      <div>{`A new anecdote ${anecdote.content} has been created`}</div>
+      {/* <div>{`A new anecdote ${anecdote.content} has been created`}</div> */}
+      <div>{<Alert variant="success">{anecdote.content}</Alert>}</div>
     </div>
   );
 };
@@ -125,22 +142,23 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input {...content} />
-        </div>
-        <div>
-          author
-          <input {...author} />
-        </div>
-        <div>
-          url for more info
-          <input {...info} />
-        </div>
-        <button onClick={handleSubmit}>create</button>
-      </form>
-      <button onClick={handleReset}>reset</button>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>content</Form.Label>
+          <Form.Control {...content} />
+          {/* <input {...content} /> */}
+          <Form.Label>author</Form.Label>
+          <Form.Control {...author} />
+          <Form.Label>url for more info</Form.Label>
+          <Form.Control {...info} />
+          <Button variant="primary" onClick={handleSubmit}>
+            create
+          </Button>
+        </Form.Group>
+      </Form>
+      <Button variant="primary" onClick={handleReset}>
+        reset
+      </Button>
     </div>
   );
 };
@@ -190,7 +208,7 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
   return (
-    <div>
+    <div className="container">
       <h1>Software anecdotes</h1>
       <Router>
         <Menu />
