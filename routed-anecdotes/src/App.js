@@ -10,35 +10,40 @@ import {
   Redirect
 } from "react-router-dom";
 import { useField } from "./hooks";
-import { Table, Form, Button, Alert, Navbar, Nav } from "react-bootstrap";
+// import { Table, Form, Button, Alert, Navbar, Nav } from "react-bootstrap";
+import {
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  TextField,
+  Button,
+  AppBar,
+  Toolbar
+} from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 const Menu = () => {
   const padding = {
     paddingRight: 5
   };
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="mr-auto">
-          <Nav.Link href="#" as="span">
-            <Link style={padding} to="/">
-              Anecdotes
-            </Link>
-          </Nav.Link>
-          <Nav.Link href="#" as="span">
-            <Link style={padding} to="/create">
-              Create New
-            </Link>
-          </Nav.Link>
-          <Nav.Link href="#" as="span">
-            <Link style={padding} to="/about">
-              About
-            </Link>
-          </Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+    <AppBar position="static">
+      <Toolbar>
+        <Button color="inherit" component={Link} to="/">
+          Anecdotes
+        </Button>
+        <Button color="inherit" component={Link} to="/create">
+          Create New
+        </Button>
+        <Button color="inherit" component={Link} to="/about">
+          About
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 };
 
@@ -58,17 +63,19 @@ const Anecdote = ({ anecdotes }) => {
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <Table striped>
-      <tbody>
-        {anecdotes.map((anecdote) => (
-          <tr key={anecdote.id}>
-            <td>
-              <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableBody>
+          {anecdotes.map((anecdote) => (
+            <TableRow key={anecdote.id}>
+              <TableCell>
+                <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   </div>
 );
 
@@ -142,21 +149,31 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group>
-          <Form.Label>content</Form.Label>
-          <Form.Control {...content} />
-          {/* <input {...content} /> */}
-          <Form.Label>author</Form.Label>
-          <Form.Control {...author} />
-          <Form.Label>url for more info</Form.Label>
-          <Form.Control {...info} />
-          <Button variant="primary" onClick={handleSubmit}>
-            create
-          </Button>
-        </Form.Group>
-      </Form>
-      <Button variant="primary" onClick={handleReset}>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <TextField label="content" {...content} />
+        </div>
+        <div>
+          <TextField label="author" {...author} />
+        </div>
+        <div>
+          <TextField label="url for more info" {...info} />
+        </div>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          onClick={handleSubmit}
+        >
+          create
+        </Button>
+      </form>
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        onClick={handleReset}
+      >
         reset
       </Button>
     </div>
@@ -208,7 +225,7 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
   return (
-    <div className="container">
+    <Container>
       <h1>Software anecdotes</h1>
       <Router>
         <Menu />
@@ -233,7 +250,7 @@ const App = () => {
         </Switch>
       </Router>
       <Footer />
-    </div>
+    </Container>
   );
 };
 
